@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CSS-Only Hero Carousel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400&family=Oswald:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="shared.css" />
+  <style>
+    body {
+      display: grid;
+      place-items: center;
+      overflow: auto;
+      background:
+        radial-gradient(60vw 60vh at 70% 20%, rgba(255, 59, 142, 0.1), transparent),
+        radial-gradient(50vw 50vh at 20% 85%, rgba(255, 164, 59, 0.07), transparent),
+        var(--bg-dark);
+    }
+
+    .home {
+      max-width: 860px;
+      padding: 4rem 2rem;
+      text-align: center;
+    }
+
+    .home-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.45em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    .home h1 {
+      font-family: var(--font-display);
+      font-weight: 400;
+      font-size: clamp(2.4rem, 6vw, 4.5rem);
+      line-height: 1.02;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      text-wrap: balance;
+      margin: 0.8rem 0 0.4rem;
+    }
+
+    .home h1 em {
+      font-style: normal;
+      color: var(--accent);
+      background: var(--vice-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .home-sub {
+      font-family: var(--font-body);
+      font-weight: 400;
+      color: var(--text-soft);
+      font-size: 0.95rem;
+      line-height: 1.6;
+      letter-spacing: 0.03em;
+      margin-bottom: 2.8rem;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.2rem;
+      text-align: left;
+    }
+
+    .card {
+      display: block;
+      padding: 1.8rem 1.6rem;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-card);
+      background: var(--glass);
+      text-decoration: none;
+      color: #fff;
+      transition: background 0.3s, border-color 0.3s, translate 0.3s;
+    }
+
+    .card:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.5);
+      translate: 0 -3px;
+    }
+
+    .card h2 {
+      font-family: var(--font-display);
+      font-weight: 400;
+      font-size: 1.4rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      margin-bottom: 0.6rem;
+    }
+
+    .card p {
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      font-weight: 400;
+      line-height: 1.7;
+      color: var(--text-soft);
+      letter-spacing: 0.01em;
+      text-wrap: pretty;
+    }
+
+    .card .tag {
+      display: inline-block;
+      margin-top: 1rem;
+      font-size: 0.66rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-pill);
+      padding: 0.3rem 0.7rem;
+    }
+
+    .note {
+      margin-top: 2.2rem;
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      font-weight: 400;
+      line-height: 1.6;
+      letter-spacing: 0.03em;
+      color: var(--text-dim);
+    }
+  </style>
+</head>
+<body>
+  <main class="home">
+    <p class="home-label">CSS Only — experiment</p>
+    <h1>GTA <em>VI</em> Slider — No JS</h1>
+    <p class="home-sub">One Vice City hero carousel, two pure-CSS engines.</p>
+
+    <div class="cards">
+      <a class="card" href="scroll-carousel.html">
+        <h2>01 — Scroll-Snap</h2>
+        <p>Interactive: swipe or scroll between slides. Uses scroll-snap, scroll-driven animations (<code>view()</code> / <code>scroll()</code> timelines), and the new <code>::scroll-button</code> + <code>::scroll-marker</code> carousel pseudo-elements.</p>
+        <span class="tag">Chrome / Edge 135+</span>
+      </a>
+      <a class="card" href="autoplay-carousel.html">
+        <h2>02 — Autoplay</h2>
+        <p>Auto-advances every 5 seconds on a single shared 20s keyframe clock — synced slide crossfades, content cascade, counter, and countdown pills. Hover to pause.</p>
+        <span class="tag">All modern browsers</span>
+      </a>
+    </div>
+
+    <p class="note">CSS cannot both auto-scroll and stay user-scrollable — hence two demos.</p>
+  </main>
+</body>
+</html>

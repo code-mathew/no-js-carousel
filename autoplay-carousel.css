@@ -1,0 +1,289 @@
+/* ==========================================================
+   autoplay-carousel.css — Demo 2: keyframe autoplay
+   One shared 20s clock (4 slides x 5s); every animation runs
+   on it with a negative delay of --i x 5s, so slides, content,
+   pills and counter stay perfectly in sync with zero JS.
+   ========================================================== */
+
+:root {
+  --slides: 4;
+  --cycle: calc(var(--slide-duration) * var(--slides)); /* 20s */
+}
+
+.slider {
+  position: relative;
+  width: 100vw;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.slider .slide {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  animation: slide-cycle var(--cycle) infinite;
+  animation-delay: calc((var(--i) - var(--slides)) * var(--slide-duration));
+}
+
+/* fades in ON TOP (z3) during the last 5% of the previous window,
+   holds its 25% window at z2, then drops beneath (z1) the moment the
+   window ends — so even paused exactly on a boundary, the newer slide
+   always covers the older one */
+@keyframes slide-cycle {
+  0%      { opacity: 1; z-index: 2; }
+  24.99%  { opacity: 1; z-index: 2; }
+  25%     { opacity: 1; z-index: 1; }
+  30%     { opacity: 0; z-index: 1; }
+  94.99%  { opacity: 0; z-index: 1; }
+  95%     { opacity: 0; z-index: 3; }
+  100%    { opacity: 1; z-index: 3; }
+}
+
+/* ------- content cascade (staggered by --d) ------- */
+
+.slider .slide-label,
+.slider .slide-title,
+.slider .slide-name,
+.slider .slide-desc,
+.slider .slide-btns {
+  animation: content-cycle var(--cycle) infinite;
+  animation-delay: calc((var(--i) - var(--slides)) * var(--slide-duration) + var(--d, 0s));
+}
+
+.slider .slide-label { --d: 0.05s; }
+.slider .slide-title { --d: 0.2s; }
+.slider .slide-name  { --d: 0.35s; }
+.slider .slide-desc  { --d: 0.5s; }
+.slider .slide-btns  { --d: 0.65s; }
+
+@keyframes content-cycle {
+  0%   { opacity: 0; translate: 0 18px; }
+  4%   { opacity: 1; translate: 0 0; }
+  25%  { opacity: 1; translate: 0 0; }
+  30%  { opacity: 0; translate: 0 18px; }
+  100% { opacity: 0; translate: 0 18px; }
+}
+
+/* ------- slow 6s-style zoom while the slide is active ------- */
+
+.slider .slide-bg {
+  animation: zoom-cycle var(--cycle) infinite;
+  animation-delay: calc((var(--i) - var(--slides)) * var(--slide-duration));
+}
+
+@keyframes zoom-cycle {
+  0%   { scale: 1.15; }
+  25%  { scale: 1.02; }
+  30%  { scale: 1.15; }
+  100% { scale: 1.15; }
+}
+
+/* ---------------- pause / play button ----------------
+   Hovering it pauses every animation on the slider (see the
+   :has() rule below); the pause bars morph into a play
+   triangle via clip-path transitions. */
+
+.playpause {
+  position: absolute;
+  left: clamp(1.5rem, 5vw, 4.5rem);
+  bottom: 2rem;
+  z-index: 20;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: var(--glass);
+  backdrop-filter: blur(8px);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: background 0.3s, scale 0.3s;
+}
+
+.playpause:hover {
+  background: rgba(255, 59, 142, 0.18);
+  scale: 1.08;
+}
+
+.pp-icon {
+  position: relative;
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+
+/* the two pause bars */
+.pp-icon::before,
+.pp-icon::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  height: 100%;
+  background: #fff;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  transition: clip-path 0.35s ease, left 0.35s ease, width 0.35s ease;
+}
+
+.pp-icon::before {
+  left: 2px;
+  width: 5px;
+}
+
+.pp-icon::after {
+  left: 9px;
+  width: 5px;
+}
+
+/* on hover the bars join and reshape into a right-pointing triangle:
+   left bar = left half, right bar = the tip */
+.playpause:hover .pp-icon::before {
+  left: 2px;
+  width: 12px;
+  clip-path: polygon(0 0, 100% 50%, 100% 50%, 0 100%);
+}
+
+.playpause:hover .pp-icon::after {
+  left: 8px;
+  width: 6px;
+  clip-path: polygon(0 25%, 100% 50%, 100% 50%, 0 75%);
+}
+
+/* ---------------- counter ---------------- */
+
+.counter {
+  position: absolute;
+  left: calc(clamp(1.5rem, 5vw, 4.5rem) + 46px + 1.6rem);
+  bottom: 2.6rem;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  letter-spacing: 0.15em;
+}
+
+.counter-window {
+  display: block;
+  height: 1.35rem;
+  line-height: 1.35rem;
+  overflow: hidden;
+}
+
+.counter-strip {
+  display: block;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #fff;
+  animation: count-cycle var(--cycle) infinite;
+}
+
+.counter-strip span {
+  display: block;
+  height: 1.35rem;
+}
+
+/* stepped, with a quick roll between windows */
+@keyframes count-cycle {
+  0%, 24%   { translate: 0 0; }
+  27%, 49%  { translate: 0 -25%; }
+  52%, 74%  { translate: 0 -50%; }
+  77%, 100% { translate: 0 -75%; } /* loop snaps back to 01 */
+}
+
+.counter-sep {
+  width: 34px;
+  height: 1px;
+  background: var(--line);
+}
+
+.counter-total {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+}
+
+/* ---------------- dot pills with countdown fill ---------------- */
+
+.pills {
+  position: absolute;
+  left: 50%;
+  bottom: 2.6rem;
+  translate: -50% 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.pill {
+  position: relative;
+  width: 26px;
+  height: 5px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.4);
+  overflow: hidden;
+  animation: pill-cycle var(--cycle) infinite;
+  animation-delay: calc((var(--i) - var(--slides)) * var(--slide-duration));
+}
+
+/* active pill grows and turns vice-pink for its window */
+@keyframes pill-cycle {
+  0%      { width: 44px; background: rgba(255, 59, 142, 0.45); }
+  24.99%  { width: 44px; background: rgba(255, 59, 142, 0.45); }
+  25%     { width: 26px; background: rgba(255, 255, 255, 0.4); }
+  95%     { width: 26px; background: rgba(255, 255, 255, 0.4); }
+  100%    { width: 44px; background: rgba(255, 59, 142, 0.45); }
+}
+
+/* the 5s countdown fill */
+.pill::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  transform-origin: left;
+  animation: timer-cycle var(--cycle) infinite;
+  animation-delay: calc((var(--i) - var(--slides)) * var(--slide-duration));
+}
+
+@keyframes timer-cycle {
+  0%      { scale: 0 1; opacity: 1; }
+  24.99%  { scale: 1 1; opacity: 1; }
+  25%     { scale: 0 1; opacity: 0; }
+  99.99%  { scale: 0 1; opacity: 0; }
+  100%    { scale: 0 1; opacity: 1; }
+}
+
+/* ---------------- hover the pause button = pause everything ---------------- */
+
+.slider:has(.playpause:hover) *,
+.slider:has(.playpause:hover) *::after {
+  animation-play-state: paused;
+}
+
+/* ---------------- reduced motion: static first-frame look ----------------
+   shared.css sets animation: none, which would leave every slide at its
+   base styles; make that a sensible static page (all slides stack, the
+   last one in DOM paints on top). */
+@media (prefers-reduced-motion: reduce) {
+  .slider .slide,
+  .slider .slide-content > *,
+  .slider .counter-strip,
+  .slider .pill {
+    opacity: 1;
+    translate: 0 0;
+  }
+
+  .slider .slide-bg {
+    scale: 1;
+  }
+
+  .pill::after {
+    display: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .counter,
+  .playpause {
+    display: none;
+  }
+}

@@ -1,0 +1,258 @@
+/* ==========================================================
+   scroll-carousel.css — Demo 1: interactive scroll-snap
+   Modern CSS carousel: scroll-snap + scroll-driven animations
+   + ::scroll-button / ::scroll-marker (Chrome/Edge 135+)
+   ========================================================== */
+
+body {
+  /* let the fixed counter reach the slider's scroll timeline */
+  timeline-scope: --slider;
+}
+
+.slider {
+  display: flex;
+  width: 100vw;
+  height: 100dvh;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  anchor-name: --slider;
+  scroll-timeline: --slider x;
+  scroll-marker-group: after;
+}
+
+.slider::-webkit-scrollbar {
+  display: none;
+}
+
+.slider .slide {
+  flex: 0 0 100%;
+  height: 100%;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  view-timeline: --slide inline;
+}
+
+/* ------- content reveal, driven by each slide's view timeline -------
+   Symmetric keyframes: hidden while entering, fully shown at center,
+   hidden again while leaving. Stagger via per-element --d, which
+   narrows the visible window so later elements arrive later. */
+
+@keyframes reveal {
+  0%   { opacity: 0; translate: 0 24px; }
+  25%  { opacity: 1; translate: 0 0; }
+  75%  { opacity: 1; translate: 0 0; }
+  100% { opacity: 0; translate: 0 24px; }
+}
+
+.slider .slide-label,
+.slider .slide-title,
+.slider .slide-name,
+.slider .slide-desc,
+.slider .slide-btns {
+  animation: reveal linear both;
+  animation-timeline: --slide;
+  animation-range: cover calc(2% + var(--d, 0%)) cover calc(98% - var(--d, 0%));
+}
+
+.slider .slide-label { --d: 2%; }
+.slider .slide-title { --d: 5%; }
+.slider .slide-name  { --d: 8%; }
+.slider .slide-desc  { --d: 11%; }
+.slider .slide-btns  { --d: 14%; }
+
+/* slow zoom on the hero image while the slide is on screen */
+@keyframes bg-zoom {
+  0%   { scale: 1.15; }
+  50%  { scale: 1; }
+  100% { scale: 1.15; }
+}
+
+.slider .slide-bg {
+  animation: bg-zoom linear both;
+  animation-timeline: --slide;
+  animation-range: cover;
+}
+
+/* ---------------- prev / next scroll buttons ---------------- */
+
+.slider::scroll-button(*) {
+  position: fixed;
+  position-anchor: --slider;
+  bottom: calc(anchor(bottom) + 2rem);
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: var(--glass);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  font-size: 1.05rem;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: background 0.3s, scale 0.3s, opacity 0.3s;
+  z-index: 20;
+}
+
+.slider::scroll-button(left) {
+  content: "←" / "Previous slide";
+  left: calc(anchor(left) + clamp(1.5rem, 5vw, 4.5rem));
+}
+
+.slider::scroll-button(right) {
+  content: "→" / "Next slide";
+  left: calc(anchor(left) + clamp(1.5rem, 5vw, 4.5rem) + 58px);
+}
+
+.slider::scroll-button(*):hover {
+  background: rgba(255, 255, 255, 0.18);
+  scale: 1.08;
+}
+
+.slider::scroll-button(*):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.slider::scroll-button(*):disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+/* ---------------- dot pill markers ---------------- */
+
+.slider::scroll-marker-group {
+  position: fixed;
+  position-anchor: --slider;
+  bottom: calc(anchor(bottom) + 2.6rem);
+  justify-self: anchor-center;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  z-index: 20;
+}
+
+.slider .slide::scroll-marker {
+  content: "";
+  width: 26px;
+  height: 5px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  transition: background 0.35s, width 0.35s;
+}
+
+.slider .slide::scroll-marker:hover {
+  background: rgba(255, 255, 255, 0.65);
+}
+
+.slider .slide::scroll-marker:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.slider .slide::scroll-marker:target-current {
+  width: 44px;
+  background: var(--accent);
+}
+
+/* ---------------- 01 / 04 counter + progress line ----------------
+   A 1-line clipping window over a vertical strip of numbers; the
+   strip slides up as the slider scrolls (scroll-driven animation). */
+
+.counter {
+  position: fixed;
+  left: calc(clamp(1.5rem, 5vw, 4.5rem) + 58px + 58px + 1.4rem);
+  bottom: 2.6rem;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-family: var(--font-ui);
+  letter-spacing: 0.15em;
+}
+
+.counter-window {
+  display: block;
+  height: 1.35rem;
+  line-height: 1.35rem;
+  overflow: hidden;
+}
+
+.counter-strip {
+  display: block;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #fff;
+  animation: count-up linear both;
+  animation-timeline: --slider;
+}
+
+.counter-strip span {
+  display: block;
+  height: 1.35rem;
+}
+
+@keyframes count-up {
+  from { translate: 0 0; }
+  to   { translate: 0 -75%; } /* 3 of 4 rows */
+}
+
+.counter-sep {
+  width: 34px;
+  height: 1px;
+  background: var(--line);
+}
+
+.counter-total {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+}
+
+.counter-progress {
+  width: 72px;
+  height: 2px;
+  margin-left: 0.4rem;
+  background: rgba(255, 255, 255, 0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.counter-progress::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--accent);
+  transform-origin: left;
+  animation: progress linear both;
+  animation-timeline: --slider;
+}
+
+@keyframes progress {
+  from { scale: 0 1; }
+  to   { scale: 1 1; }
+}
+
+/* reduced motion: shared.css disables animations; content is
+   visible by default here, so nothing extra needed. Just make sure
+   the reveal's "both" fill doesn't hide things if animations are off. */
+@media (prefers-reduced-motion: reduce) {
+  .slider {
+    scroll-behavior: auto;
+  }
+}
+
+@media (max-width: 560px) {
+  .counter {
+    display: none;
+  }
+
+  /* swiping + markers cover navigation on touch screens */
+  .slider::scroll-button(*) {
+    display: none;
+  }
+}

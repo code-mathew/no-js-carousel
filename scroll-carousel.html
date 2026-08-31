@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GTA VI Slider — Scroll-Snap (CSS only)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400&family=Oswald:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="shared.css" />
+  <link rel="stylesheet" href="scroll-carousel.css" />
+</head>
+<body>
+
+  <div class="slider" tabindex="0" aria-label="GTA VI slider — scroll or use the arrows">
+
+    <section class="slide">
+      <picture class="slide-bg">
+        <source media="(orientation: portrait)" srcset="Images/mobile/Official_Cover_Art_portrait.webp" />
+        <img src="Images/Official_Cover_Art_landscape.webp" alt="Grand Theft Auto VI official cover art" />
+      </picture>
+      <div class="slide-overlay"></div>
+      <div class="slide-content">
+        <p class="slide-label">CSS Only</p>
+        <h1 class="slide-title">Grand Theft Auto</h1>
+        <h2 class="slide-name">VI</h2>
+        <p class="slide-desc">Vice City, USA. The darkest side of the sunniest place in America. Coming November 19, 2026 to PlayStation 5 and Xbox Series X|S.</p>
+        <div class="slide-btns">
+          <a class="btn btn-primary" href="https://www.rockstargames.com/VI/media/artwork-wallpapers" target="_blank" rel="noopener">Artwork &amp; Wallpapers</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <picture class="slide-bg">
+        <source media="(orientation: portrait)" srcset="Images/mobile/Jason_and_Lucia_01_With_Logos_portrait.webp" />
+        <img src="Images/Jason_and_Lucia_01_With_Logos_landscape.webp" alt="Jason and Lucia in Vice City" />
+      </picture>
+      <div class="slide-overlay"></div>
+      <div class="slide-content">
+        <p class="slide-label">CSS Only</p>
+        <h1 class="slide-title">Jason and</h1>
+        <h2 class="slide-name">Lucia</h2>
+        <p class="slide-desc">Jason and Lucia have always known the deck is stacked against them — forced to rely on each other more than ever if they want to make it out alive.</p>
+        <div class="slide-btns">
+          <a class="btn btn-primary" href="https://www.rockstargames.com/VI/media/artwork-wallpapers" target="_blank" rel="noopener">Artwork &amp; Wallpapers</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <picture class="slide-bg">
+        <source media="(orientation: portrait)" srcset="Images/mobile/Jason_and_Lucia_Robbery_With_Logo_portrait.webp" />
+        <img src="Images/Jason_and_Lucia_Robbery_With_Logo_landscape.webp" alt="Jason and Lucia mid-robbery" />
+      </picture>
+      <div class="slide-overlay"></div>
+      <div class="slide-content">
+        <p class="slide-label">CSS Only</p>
+        <h1 class="slide-title">An Easy Score</h1>
+        <h2 class="slide-name">Gone Wrong</h2>
+        <p class="slide-desc">When an easy score goes wrong, Jason and Lucia land in the middle of a criminal conspiracy stretching across the state of Leonida.</p>
+        <div class="slide-btns">
+          <a class="btn btn-primary" href="https://www.rockstargames.com/VI/media/artwork-wallpapers" target="_blank" rel="noopener">Artwork &amp; Wallpapers</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <picture class="slide-bg">
+        <source media="(orientation: portrait)" srcset="Images/mobile/Jason_Lucia_Beach_With_Logos_portrait.webp" />
+        <img src="Images/Jason_Lucia_Beach_With_Logos_landscape.webp" alt="Jason and Lucia on the beach" />
+      </picture>
+      <div class="slide-overlay"></div>
+      <div class="slide-content">
+        <p class="slide-label">CSS Only</p>
+        <h1 class="slide-title">Only in</h1>
+        <h2 class="slide-name">Leonida</h2>
+        <p class="slide-desc">From the neon-soaked streets of Vice City to the open waters of the Keys — the neon burns brightest where the deck is stacked against you.</p>
+        <div class="slide-btns">
+          <a class="btn btn-primary" href="https://www.rockstargames.com/VI/media/artwork-wallpapers" target="_blank" rel="noopener">Artwork &amp; Wallpapers</a>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- 01 / 04 counter + scroll progress, driven by the slider's scroll timeline -->
+  <div class="counter" aria-hidden="true">
+    <span class="counter-window">
+      <span class="counter-strip">
+        <span>01</span><span>02</span><span>03</span><span>04</span>
+      </span>
+    </span>
+    <span class="counter-sep"></span>
+    <span class="counter-total">04</span>
+    <span class="counter-progress"></span>
+  </div>
+
+</body>
+</html>
