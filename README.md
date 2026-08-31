@@ -2,7 +2,7 @@
 
 A GTA VI–themed hero carousel built with **zero JavaScript** — two separate pure-CSS engines, because CSS can auto-advance a slider *or* keep it user-scrollable, but not both at once.
 
-Open [`index.html`](index.html) to pick a demo. No build step, no dependencies — just static HTML and CSS.
+Open [`index.html`]([index.html](https://code-mathew.github.io/no-js-carousel/)) to pick a demo. No build step, no dependencies — just static HTML and CSS.
 
 ## The two demos
 
