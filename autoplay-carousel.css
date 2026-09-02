@@ -25,17 +25,19 @@
   animation-delay: calc((var(--i) - var(--slides)) * var(--slide-duration));
 }
 
-/* fades in ON TOP (z3) during the last 5% of the previous window,
-   holds its 25% window at z2, then drops beneath (z1) the moment the
-   window ends — so even paused exactly on a boundary, the newer slide
-   always covers the older one */
+/* fades in ON TOP (z3) during the last 2% of the previous window
+   (a 400ms crossfade — sharp enough that pausing rarely lands inside
+   it and never holds a long 50/50 double exposure), holds its 25%
+   window at z2, then drops beneath (z1) the moment the window ends —
+   so even paused exactly on a boundary, the newer slide always covers
+   the older one */
 @keyframes slide-cycle {
   0%      { opacity: 1; z-index: 2; }
   24.99%  { opacity: 1; z-index: 2; }
   25%     { opacity: 1; z-index: 1; }
   30%     { opacity: 0; z-index: 1; }
-  94.99%  { opacity: 0; z-index: 1; }
-  95%     { opacity: 0; z-index: 3; }
+  97.99%  { opacity: 0; z-index: 1; }
+  98%     { opacity: 0; z-index: 3; }
   100%    { opacity: 1; z-index: 3; }
 }
 
@@ -78,10 +80,28 @@
   100% { scale: 1.15; }
 }
 
-/* ---------------- pause / play button ----------------
-   Hovering it pauses every animation on the slider (see the
-   :has() rule below); the pause bars morph into a play
-   triangle via clip-path transitions. */
+/* ---------------- pause / play toggle ----------------
+   A visually hidden checkbox carries the state so click, tap,
+   and keyboard all pause (see the :has() rules below); hovering
+   the label previews the pause. The pause bars morph into a
+   play triangle via clip-path transitions. */
+
+.pause-toggle {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.pause-toggle:focus-visible + .playpause {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
 
 .playpause {
   position: absolute;
@@ -100,9 +120,15 @@
   transition: background 0.3s, scale 0.3s;
 }
 
-.playpause:hover {
-  background: rgba(255, 59, 142, 0.18);
-  scale: 1.08;
+/* hover styling is gated to real pointers throughout this file: a touch
+   browser leaves a sticky :hover on the tapped label until you tap
+   somewhere else, which would keep the carousel paused (and the icon
+   stuck on the play triangle) after the checkbox is unchecked. */
+@media (hover: hover) and (pointer: fine) {
+  .playpause:hover {
+    background: rgba(255, 59, 142, 0.18);
+    scale: 1.08;
+  }
 }
 
 .pp-icon {
@@ -134,18 +160,32 @@
   width: 5px;
 }
 
-/* on hover the bars join and reshape into a right-pointing triangle:
-   left bar = left half, right bar = the tip */
-.playpause:hover .pp-icon::before {
+/* on hover or while paused the bars join and reshape into a
+   right-pointing triangle: left bar = left half, right bar = the tip */
+.pause-toggle:checked + .playpause .pp-icon::before {
   left: 2px;
   width: 12px;
   clip-path: polygon(0 0, 100% 50%, 100% 50%, 0 100%);
 }
 
-.playpause:hover .pp-icon::after {
+.pause-toggle:checked + .playpause .pp-icon::after {
   left: 8px;
   width: 6px;
   clip-path: polygon(0 25%, 100% 50%, 100% 50%, 0 75%);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .playpause:hover .pp-icon::before {
+    left: 2px;
+    width: 12px;
+    clip-path: polygon(0 0, 100% 50%, 100% 50%, 0 100%);
+  }
+
+  .playpause:hover .pp-icon::after {
+    left: 8px;
+    width: 6px;
+    clip-path: polygon(0 25%, 100% 50%, 100% 50%, 0 75%);
+  }
 }
 
 /* ---------------- counter ---------------- */
@@ -225,12 +265,16 @@
 }
 
 /* active pill grows and turns vice-pink for its window */
+/* the active track sits at half-strength accent so the solid accent
+   countdown fill stays readable on top of it; paused at any moment,
+   the active pill still reads unmistakably pink like the scroll
+   demo's :target-current marker */
 @keyframes pill-cycle {
-  0%      { width: 44px; background: rgba(255, 59, 142, 0.45); }
-  24.99%  { width: 44px; background: rgba(255, 59, 142, 0.45); }
+  0%      { width: 44px; background: rgba(255, 59, 142, 0.5); }
+  24.99%  { width: 44px; background: rgba(255, 59, 142, 0.5); }
   25%     { width: 26px; background: rgba(255, 255, 255, 0.4); }
   95%     { width: 26px; background: rgba(255, 255, 255, 0.4); }
-  100%    { width: 44px; background: rgba(255, 59, 142, 0.45); }
+  100%    { width: 44px; background: rgba(255, 59, 142, 0.5); }
 }
 
 /* the 5s countdown fill */
@@ -252,17 +296,29 @@
   100%    { scale: 0 1; opacity: 1; }
 }
 
-/* ---------------- hover the pause button = pause everything ---------------- */
+/* ------- pause everything: checkbox checked, or hovering the button ------- */
 
-.slider:has(.playpause:hover) *,
-.slider:has(.playpause:hover) *::after {
+/* the checkbox is the real state — tap, click and keyboard all land here */
+.slider:has(.pause-toggle:checked) *,
+.slider:has(.pause-toggle:checked) *::after {
   animation-play-state: paused;
+}
+
+/* hover-to-pause is a mouse convenience only. On touch it would outlive
+   the tap and keep the carousel frozen after unchecking, so it never
+   applies there. */
+@media (hover: hover) and (pointer: fine) {
+  .slider:has(.playpause:hover) *,
+  .slider:has(.playpause:hover) *::after {
+    animation-play-state: paused;
+  }
 }
 
 /* ---------------- reduced motion: static first-frame look ----------------
    shared.css sets animation: none, which would leave every slide at its
-   base styles; make that a sensible static page (all slides stack, the
-   last one in DOM paints on top). */
+   base styles; make that a sensible static page. Slides restack so slide
+   1 paints on top — matching the counter's resting "01" — and the pause
+   control disappears because there is no motion left to pause. */
 @media (prefers-reduced-motion: reduce) {
   .slider .slide,
   .slider .slide-content > *,
@@ -272,6 +328,10 @@
     translate: 0 0;
   }
 
+  .slider .slide {
+    z-index: calc(var(--slides) - var(--i));
+  }
+
   .slider .slide-bg {
     scale: 1;
   }
@@ -279,11 +339,23 @@
   .pill::after {
     display: none;
   }
+
+  /* slide 1 is on top, so pill 1 reads active */
+  .pills .pill:first-child {
+    width: 44px;
+    background: rgba(255, 59, 142, 0.5);
+  }
+
+  .pause-toggle,
+  .playpause {
+    display: none;
+  }
 }
 
+/* the pause toggle stays visible on mobile: touch users have no hover,
+   so the checkbox is their only way to stop the motion */
 @media (max-width: 560px) {
-  .counter,
-  .playpause {
+  .counter {
     display: none;
   }
 }

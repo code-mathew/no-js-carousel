@@ -23,8 +23,10 @@ body {
   scroll-marker-group: after;
 }
 
-.slider::-webkit-scrollbar {
-  display: none;
+@supports (animation-timeline: --slide) {
+  .slider::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .slider .slide {
@@ -47,22 +49,6 @@ body {
   100% { opacity: 0; translate: 0 24px; }
 }
 
-.slider .slide-label,
-.slider .slide-title,
-.slider .slide-name,
-.slider .slide-desc,
-.slider .slide-btns {
-  animation: reveal linear both;
-  animation-timeline: --slide;
-  animation-range: cover calc(2% + var(--d, 0%)) cover calc(98% - var(--d, 0%));
-}
-
-.slider .slide-label { --d: 2%; }
-.slider .slide-title { --d: 5%; }
-.slider .slide-name  { --d: 8%; }
-.slider .slide-desc  { --d: 11%; }
-.slider .slide-btns  { --d: 14%; }
-
 /* slow zoom on the hero image while the slide is on screen */
 @keyframes bg-zoom {
   0%   { scale: 1.15; }
@@ -70,10 +56,58 @@ body {
   100% { scale: 1.15; }
 }
 
-.slider .slide-bg {
-  animation: bg-zoom linear both;
-  animation-timeline: --slide;
-  animation-range: cover;
+/* Guard every scroll-driven animation: without this, browsers that
+   don't support animation-timeline run the reveal as a 0s animation
+   frozen at its 100% frame — opacity 0, an art-only page with no text.
+   Unsupported browsers now get a static, fully readable snap carousel. */
+@supports (animation-timeline: --slide) {
+  .slider .slide-label,
+  .slider .slide-title,
+  .slider .slide-name,
+  .slider .slide-desc,
+  .slider .slide-btns {
+    animation: reveal linear both;
+    animation-timeline: --slide;
+    animation-range: cover calc(2% + var(--d, 0%)) cover calc(98% - var(--d, 0%));
+  }
+
+  .slider .slide-label { --d: 2%; }
+  .slider .slide-title { --d: 5%; }
+  .slider .slide-name  { --d: 8%; }
+  .slider .slide-desc  { --d: 11%; }
+  .slider .slide-btns  { --d: 14%; }
+
+  /* keyboard rescue: tabbing into an off-screen slide's link scrolls the
+     snap container to an off-snap offset where the reveal would hide the
+     content the focus just landed on. While focus is inside a slide, its
+     content stays fully visible. */
+  .slider .slide:focus-within .slide-label,
+  .slider .slide:focus-within .slide-title,
+  .slider .slide:focus-within .slide-name,
+  .slider .slide:focus-within .slide-desc,
+  .slider .slide:focus-within .slide-btns {
+    animation: none;
+  }
+
+  .slider .slide-bg {
+    animation: bg-zoom linear both;
+    animation-timeline: --slide;
+    animation-range: cover;
+  }
+}
+
+@supports not (animation-timeline: --slide) {
+  /* the counter/progress ride the scroll timeline; hidden rather than lying at 01 */
+  .counter {
+    display: none;
+  }
+
+  /* no ::scroll-button / ::scroll-marker here either — show a slim
+     scrollbar so the horizontal scroll is discoverable */
+  .slider {
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent) rgba(255, 255, 255, 0.12);
+  }
 }
 
 /* ---------------- prev / next scroll buttons ---------------- */

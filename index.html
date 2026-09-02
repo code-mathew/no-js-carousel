@@ -12,6 +12,7 @@
     body {
       display: grid;
       place-items: center;
+      height:100dvh;
       overflow: auto;
       background:
         radial-gradient(60vw 60vh at 70% 20%, rgba(255, 59, 142, 0.1), transparent),
@@ -21,7 +22,7 @@
 
     .home {
       max-width: 860px;
-      padding: 4rem 2rem;
+      padding: 2rem;
       text-align: center;
     }
 
@@ -108,7 +109,7 @@
     .card .tag {
       display: inline-block;
       margin-top: 1rem;
-      font-size: 0.66rem;
+      font-size: 0.7rem;
       letter-spacing: 0.25em;
       text-transform: uppercase;
       color: var(--text-dim);
@@ -131,8 +132,8 @@
 <body>
   <main class="home">
     <p class="home-label">CSS Only — experiment</p>
-    <h1>GTA <em>VI</em> Slider — No JS</h1>
-    <p class="home-sub">One Vice City hero carousel, two pure-CSS engines.</p>
+    <h1>Hero <em>CSS</em> Slider — No JS</h1>
+    <p class="home-sub">A GTA VI–themed hero carousel built with zero JavaScript — two separate pure-CSS engines, because CSS can auto-advance a slider or keep it user-scrollable, but not both at once.</p>
 
     <div class="cards">
       <a class="card" href="scroll-carousel.html">
@@ -146,8 +147,6 @@
         <span class="tag">All modern browsers</span>
       </a>
     </div>
-
-    <p class="note">CSS cannot both auto-scroll and stay user-scrollable — hence two demos.</p>
   </main>
 </body>
 </html>

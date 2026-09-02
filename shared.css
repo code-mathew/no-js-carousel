@@ -51,6 +51,26 @@ body {
   outline-offset: 3px;
 }
 
+/* ---------------- Demo nav (back / switch) ----------------
+   Fixed top-left pills on both demo pages: the way back to the
+   index and the one-click jump to the sibling engine. */
+
+.demo-nav {
+  position: fixed;
+  top: 1.4rem;
+  left: clamp(1.25rem, 3vw, 3rem);
+  z-index: 50;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.demo-nav .btn {
+  padding: 0.55rem 1.1rem;
+  background: rgba(18, 7, 31, 0.4);
+  backdrop-filter: blur(8px);
+}
+
 /* ---------------- Slide anatomy ---------------- */
 
 .slide {
@@ -192,6 +212,11 @@ body {
 }
 
 @media (max-width: 560px) {
+  .demo-nav {
+    top: 1rem;
+    left: 1.25rem;
+  }
+
   .slide-content {
     bottom: 6.5rem;
     padding-right: 1rem;
